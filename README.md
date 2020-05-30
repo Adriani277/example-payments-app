@@ -1,0 +1,1 @@
+Basic fp scala application
