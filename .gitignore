@@ -2,3 +2,4 @@ target/
 .metals/*
 .bloop/*
 project/metals.sbt
+http-requests
