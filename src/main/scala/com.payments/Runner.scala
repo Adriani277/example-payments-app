@@ -5,7 +5,7 @@ import cats.effect._
 import org.http4s.server.blaze.BlazeServerBuilder
 
 object Runner extends IOApp {
-  def run(args: List[String]): IO[ExitCode] = {
+  def run(args: List[String]): IO[ExitCode] =
     BlazeServerBuilder[IO]
       .bindHttp(8080, "localhost")
       .withHttpApp(PaymentsEndpoint.service)
@@ -13,5 +13,4 @@ object Runner extends IOApp {
       .compile
       .drain
       .as(ExitCode.Success)
-  }
 }
