@@ -1,24 +1,21 @@
 package com.payments.programs
 
 import com.payments.algebras.PaymentCreationAlg
+import com.payments.algebras.ServicesAlg
 import com.payments.domain.Payment
 import com.payments.domain.ServiceError
 import cats.effect.IO
-import cats.implicits._
-import com.payments.algebras.AmountValidationAlg
-import com.payments.interpreters.AmountValidation
 
-final case class PaymentCreation private (amountValidator: AmountValidationAlg)
-    extends PaymentCreationAlg {
+final case class PaymentCreation private (services: ServicesAlg) extends PaymentCreationAlg {
+  import services._
+
   def create(payment: Payment): IO[Either[ServiceError, Payment]] =
-    IO.pure {
-      amountValidator.validate(payment.amount) match {
-        case Left(value) => value.asLeft[Payment]
-        case Right(_)    => payment.asRight[ServiceError]
-      }
-    }
+    IO.pure(for {
+      _ <- amountService.validate(payment.amount)
+      _ <- transactionService.validate(payment.name, payment.recipient)
+    } yield payment)
 }
 
 object PaymentCreation {
-  val build = new PaymentCreation(AmountValidation)
+  def build(services: ServicesAlg) = new PaymentCreation(services)
 }
