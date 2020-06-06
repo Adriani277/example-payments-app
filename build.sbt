@@ -34,5 +34,6 @@ scalacOptions ++= Seq(
   "-unchecked",
   "-language:postfixOps",
   "-language:higherKinds",
-  "-Ywarn-unused"
+  "-Ywarn-unused",
+  "-Ymacro-annotations"
 )

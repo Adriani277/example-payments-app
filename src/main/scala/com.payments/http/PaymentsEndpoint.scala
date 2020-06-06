@@ -20,7 +20,7 @@ final case class PaymentsEndpoint(creationProgram: PaymentCreationAlg) {
           view   <- r.as[PaymentView]
           result <- creationProgram.create(PaymentView.toPayment(view))
           response <- result match {
-            case Left(_)  => UnprocessableEntity("bad")
+            case Left(e)  => UnprocessableEntity(ErrorResponse.fromServiceError(e).asJson)
             case Right(v) => Ok(PaymentCreationData.fromPayment(v).asJson)
           }
         } yield response
