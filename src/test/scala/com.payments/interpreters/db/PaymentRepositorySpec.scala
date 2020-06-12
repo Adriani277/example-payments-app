@@ -16,9 +16,11 @@ final class PaymentRepositorySpec extends TestSuite with doobie.scalatest.IOChec
     ""
   )
 
-  describe("select") {
-    it("produces valid query with correct types") {
-      checkOutput(PaymentRepository.select(UUID.randomUUID))
+  ignore("DB Test") {
+    describe("select") {
+      it("produces valid query with correct types") {
+        checkOutput(PaymentRepository.select(UUID.randomUUID))
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 package com.payments
 
-import com.payments.Config.DoobieConfig
+import com.payments.Config._
 import cats.effect.Resource
 import cats.effect.IO
 import cats.effect.Blocker
@@ -8,9 +8,11 @@ import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import cats.effect.ContextShift
 
-final case class Config(doobie: DoobieConfig)
+final case class Config(server: ServerConfig, doobie: DoobieConfig)
 
 object Config {
+  final case class ServerConfig(host: String, port: Int)
+
   final case class DoobieConfig(
       driver: String,
       url: String,

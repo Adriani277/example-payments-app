@@ -14,13 +14,13 @@ import com.payments.domain.db.PaymentData
 object Runner extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     dependencies.use {
-      case (_, transactor) =>
+      case (config, transactor) =>
         val paymentRepo = PaymentRepository(transactor)
         val services =
           Services.build[PaymentData](AmountValidation, TransactionValidation, paymentRepo)
 
         BlazeServerBuilder[IO]
-          .bindHttp(8080, "localhost")
+          .bindHttp(config.port, config.host)
           .withHttpApp(PaymentsEndpoint(PaymentCreation(services), PaymentUpdate(services)).service)
           .serve
           .compile
@@ -33,5 +33,5 @@ object Runner extends IOApp {
     config     <- Config.make(ConfigSource.default, blocker)
     ec         <- ExecutionContexts.fixedThreadPool[IO](config.doobie.connectionPoolSize)
     transactor <- DoobieUtils.buildTransactor(config.doobie, ec, blocker)
-  } yield (config, transactor)
+  } yield (config.server, transactor)
 }
