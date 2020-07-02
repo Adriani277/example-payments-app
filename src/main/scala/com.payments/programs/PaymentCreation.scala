@@ -18,15 +18,9 @@ final case class PaymentCreation private (private val services: ServicesAlg[Paym
       _ <- transactionService.validate(payment.name, payment.recipient)
     } yield payment
 
-    val creation: Either[ServiceError, IO[PaymentData]] = validated.map(paymentRepoService.create)
-
-    /**
-      * We use sequence in order to flip the types around
-      * since creation returns Either[ServiceError, IO[Payment]]
-      * and we require         IO[Either[ServiceError, Payment]]
-      *
-      * sequence will give us the required type
-      */
-    creation.sequence
+    validated.map(paymentRepoService.create) match {
+      case Left(error)  => IO.pure(error.asLeft)
+      case Right(value) => value.map(_.asRight)
+    }
   }
 }
