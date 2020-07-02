@@ -48,7 +48,7 @@ final class PaymentsEndpointSpec extends TestSuite {
 
           check[PaymentDataView](
             response,
-            Status.Ok,
+            Status.Created,
             Some(PaymentDataView(id, name, amount, recipient))
           )
       }
