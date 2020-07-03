@@ -10,6 +10,8 @@ import pureconfig.ConfigSource
 import doobie.util.ExecutionContexts
 import com.payments.programs.PaymentUpdate
 import com.payments.domain.db.PaymentData
+import doobie.util.transactor.Transactor
+import com.payments.Config.ServerConfig
 
 object Runner extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
@@ -28,7 +30,7 @@ object Runner extends IOApp {
           .as(ExitCode.Success)
     }
 
-  val dependencies = for {
+  val dependencies: Resource[IO, (ServerConfig, Transactor[IO])] = for {
     blocker    <- Blocker[IO]
     config     <- Config.make(ConfigSource.default, blocker)
     ec         <- ExecutionContexts.fixedThreadPool[IO](config.doobie.connectionPoolSize)

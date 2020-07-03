@@ -9,5 +9,9 @@ object PaymentView {
   implicit val coded: Codec[PaymentView] = deriveCodec[PaymentView]
 
   def toPayment(view: PaymentView): Payment =
-    Payment(Name(view.name), Amount(BigDecimal(view.amount)), Recipient(view.recipient))
+    Payment(
+      Name(view.name),
+      Amount(view.amount),
+      Recipient(view.recipient)
+    )
 }

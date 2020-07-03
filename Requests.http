@@ -1,0 +1,19 @@
+GET http://localhost:8080/status/now
+
+###
+POST http://localhost:8080/payment/create
+
+{
+    "name": "John",
+    "amount": 1,
+    "recipient": "John"
+}
+
+###
+
+PUT http://localhost:8080/payment/update
+
+{
+    "id": "14a9a0ae-a695-408c-8f04-a9292c1c47be",
+    "amount": 0
+}

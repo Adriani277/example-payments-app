@@ -7,16 +7,22 @@ import org.scalacheck.Gen
 
 final class AmountValidationSpec extends TestSuite {
   describe("validate") {
-    it("returns InvalidAmountError when amount is <= 0") {
-      val gen = Gen.chooseNum(Double.MinValue, 0d).map(a => Amount(BigDecimal(a)))
+    it("returns InvalidAmountError when amount is <= 0 or > 1,000,000") {
+      val gen =
+        for {
+          v1  <- Gen.chooseNum(Double.MinValue, 0d).map(Amount.apply)
+          v2  <- Gen.chooseNum(1000000.0001d, Double.MaxValue).map(Amount.apply)
+          res <- Gen.oneOf(v1, v2)
+        } yield res
+
       forAll(gen) { amount =>
         AmountValidation.validate(amount) shouldBe (Left(InvalidAmountError(amount)))
       }
     }
 
-    it("returns unit when amount is greater than 0") {
+    it("returns unit when amount is greater than 0 and < 1,000,000") {
       val gen =
-        Gen.chooseNum(Double.MinPositiveValue, Double.MaxValue).map(a => Amount(BigDecimal(a)))
+        Gen.chooseNum(Double.MinPositiveValue, 1000000d).map(Amount.apply)
       forAll(gen) { amount =>
         AmountValidation.validate(amount) shouldBe (Right(()))
       }
@@ -31,7 +37,7 @@ final class AmountValidationSpec extends TestSuite {
 
     it("ppb - returns a number greater than itself") {
       forAll(Gen.chooseNum(Int.MinValue, Int.MaxValue), minSuccessful(100000)) { x =>
-        add1(x) should be > x
+        assert(add1V2(x) > x.toDouble)
       }
     }
   }
